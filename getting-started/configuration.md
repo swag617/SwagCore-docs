@@ -32,9 +32,20 @@ modules:
   achievements: true
   party: true
   metrics: true
+  holograms: true
+  rtp: true
+  sit: true
+  fun: true
+  toggles: true
+  xp: true
+  kits: true
+  messaging: true
+  ignore: true
+  network: true
+  migration: true
 ```
 
-Every one of SwagCore's 22 modules can be independently disabled by setting its value to `false`. Disabling a module skips its command registration and listeners entirely.
+Every one of SwagCore's 32 modules can be independently disabled by setting its value to `false`. Disabling a module skips its command registration and listeners entirely.
 
 ---
 
@@ -82,6 +93,43 @@ teleport:
 |-----|---------|-------------|
 | `warmup-seconds` | `3` | Delay before a `/tpa`/`/tpahere` teleport executes once accepted |
 | `request-timeout-seconds` | `60` | How long a `/tpa` request stays valid before expiring |
+
+---
+
+## Random Teleport
+
+```yaml
+rtp:
+  min-radius: 200
+  max-radius: 3000
+  max-attempts: 20
+  cooldown-seconds: 60
+  warmup-seconds: 3
+  cost: 0.0
+  worlds: []
+```
+
+| Key | Default | Description |
+|-----|---------|-------------|
+| `min-radius` / `max-radius` | `200` / `3000` | Block-distance range from world spawn `/rtp` searches within |
+| `max-attempts` | `20` | How many random points to try before giving up with "Couldn't find a safe location" |
+| `cooldown-seconds` | `60` | Cooldown between `/rtp` uses (bypassable via `swagcore.rtp.bypasscooldown`) |
+| `warmup-seconds` | `3` | Delay before the teleport executes once a safe spot is found |
+| `cost` | `0.0` | Vault charge per use. `0` = free |
+| `worlds` | `[]` (empty) | Allow-list of world names `/rtp` is permitted in. Empty = every world allowed |
+
+---
+
+## Sit
+
+```yaml
+sit:
+  right-click-blocks: true
+```
+
+| Key | Default | Description |
+|-----|---------|-------------|
+| `right-click-blocks` | `true` | Right-click a stair or slab to sit on it, in addition to the plain `/sit` command |
 
 ---
 
@@ -266,6 +314,35 @@ metrics:
 ```
 
 The metrics module (`/tps`, `/memory`, `/uptime`, `/plugins`, `/serverinfo`) currently has no configurable options.
+
+---
+
+## Network
+
+```yaml
+network:
+  hub-server: "hub"
+  poll-interval-seconds: 30
+  this-server-name: ""
+  hub-url: ""
+  shared-secret: ""
+```
+
+| Key | Default | Description |
+|-----|---------|-------------|
+| `hub-server` | `"hub"` | Proxy-registered server name `/hub` sends players to |
+| `poll-interval-seconds` | `30` | How often the cached server list/player counts refresh |
+| `this-server-name` | *(blank)* | This server's own proxy-registered name — only needed for restart auto-return |
+| `hub-url` | *(blank)* | Base URL of the hub's SwagHub network-service mount — only needed for restart auto-return |
+| `shared-secret` | *(blank)* | Must match `network.shared-secret` in both this server's and the hub's SwagAPI `config.yml` |
+
+`/hub`, `/send`, and `/network servers` only activate if this server is actually behind a BungeeCord/Velocity proxy — auto-detected from `spigot.yml`'s `settings.bungeecord` or `config/paper-global.yml`'s `proxies.velocity.enabled`, no config needed to turn detection on. The three keys below `poll-interval-seconds` are entirely optional and only affect **restart-evacuation auto-return** — leaving them blank still evacuates players to the hub on restart, they just won't be sent back automatically. See [Cross-Server Network](../modules/network.md).
+
+---
+
+## Migration Assistant
+
+The Migration Assistant (`/swagcore migrate`) has no `config.yml` section of its own — its one piece of state (whether the join-prompt has been completed or dismissed) lives in a separate `plugins/SwagCore/migration-state.yml`, not in `config.yml`, so it survives config resets. See [Migration Assistant](../modules/migration.md).
 
 ---
 

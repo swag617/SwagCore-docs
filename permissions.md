@@ -1,6 +1,6 @@
 # Permissions
 
-SwagCore declares 65 permission nodes in `plugin.yml`. All defaults below are exactly as declared — nothing inferred.
+SwagCore declares 91 permission nodes in `plugin.yml`. All defaults below are exactly as declared — nothing inferred.
 
 ## Default Values
 
@@ -51,6 +51,13 @@ The `homes.N` nodes stack as home-slot tiers — grant `swagcore.homes.5` to a d
 | `swagcore.chat.use` | true | Switch chat channels |
 | `swagcore.chat.log` | op | View chat logs (`/chatlog`) |
 | `swagcore.chat.color` | false | Use color codes in chat |
+| `swagcore.chat.msg` | true | Use `/msg`, `/tell`, `/w`, `/reply`, `/r` |
+
+## Ignore
+
+| Permission | Default | Description |
+|-----------|---------|-------------|
+| `swagcore.ignore` | true | Use `/ignore` to block incoming private messages from a player |
 
 ## Economy
 
@@ -107,14 +114,72 @@ The `homes.N` nodes stack as home-slot tiers — grant `swagcore.homes.5` to a d
 |-----------|---------|-------------|
 | `swagcore.world.spawn` | true | Use `/spawn` |
 | `swagcore.world.setspawn` | op | Use `/setspawn` |
+| `swagcore.world.ptime` | true | Use `/ptime` on yourself |
+| `swagcore.world.ptime.others` | op | Use `/ptime` on other players |
+| `swagcore.world.pweather` | true | Use `/pweather` on yourself |
+| `swagcore.world.pweather.others` | op | Use `/pweather` on other players |
+| `swagcore.top` | true | Use `/top` |
 
-## Scoreboard, Profile & Rank
+## Random Teleport & Sitting
+
+| Permission | Default | Description |
+|-----------|---------|-------------|
+| `swagcore.rtp` | true | Use `/rtp` and `/wild` |
+| `swagcore.rtp.bypasscooldown` | op | Bypass the `/rtp` cooldown |
+| `swagcore.sit` | true | Use `/sit`, and right-click-to-sit on stairs/slabs |
+
+## Fun & Cosmetic
+
+| Permission | Default | Description |
+|-----------|---------|-------------|
+| `swagcore.fun.scale` | op | Use `/scale` on yourself |
+| `swagcore.fun.scale.others` | op | Use `/scale` on other players |
+| `swagcore.fun.speed` | op | Use `/speed` on yourself |
+| `swagcore.fun.speed.others` | op | Use `/speed` on other players |
+| `swagcore.fun.nightvision` | op | Use `/nightvision` |
+| `swagcore.fun.launch` | op | Use `/launch` on yourself |
+| `swagcore.fun.launch.others` | op | Use `/launch` on other players |
+
+## Player Toggles & XP
+
+| Permission | Default | Description |
+|-----------|---------|-------------|
+| `swagcore.toggle.tpa` | true | Use `/toggletpa` |
+| `swagcore.toggle.pay` | true | Use `/togglepay` |
+| `swagcore.xp.withdraw` | true | Use `/xpwithdraw` / `/withdrawxp` |
+
+## Kits
+
+| Permission | Default | Description |
+|-----------|---------|-------------|
+| `swagcore.kit.use` | true | Claim and browse kits (`/kit`, `/kits`) |
+| `swagcore.kit.admin` | op | Create, edit, and delete kits |
+
+> Each kit also has its own claim permission, defaulting to `swagcore.kit.<name>` unless overridden by a `permission` key in `kits.yml`.
+
+## Holograms
+
+| Permission | Default | Description |
+|-----------|---------|-------------|
+| `swagcore.holograms.admin` | op | Create, edit, and import holograms |
+
+## Cross-Server Network
+
+| Permission | Default | Description |
+|-----------|---------|-------------|
+| `swagcore.network.hub` | true | Use `/hub` to teleport to the network's hub server |
+| `swagcore.network.send` | op | Send a player to another server via `/send` |
+| `swagcore.network.servers` | op | View the server/player list of the network via `/network servers` |
+
+## Scoreboard, Profile, Stats & Rank
 
 | Permission | Default | Description |
 |-----------|---------|-------------|
 | `swagcore.scoreboard.toggle` | true | Toggle personal scoreboard |
 | `swagcore.profile.view` | true | View profiles |
 | `swagcore.profile.admin` | op | View admin-only profile data |
+| `swagcore.stats.view` | true | View your own stats |
+| `swagcore.stats.admin` | op | View other players' stats and leaderboards |
 | `swagcore.rank.vip` | false | VIP rank tag |
 | `swagcore.rank.admin` | op | Admin rank tag |
 | `swagcore.rankprogression.rankup` | true | Use `/rankup` and `/rank` (view own) |
@@ -174,3 +239,5 @@ A few commands are declared in `plugin.yml` with an explicitly empty permission 
 
 * [Admin Commands](admin-commands.md) — the command each node maps to
 * [Dashboard Overview & Access](dashboard/overview.md) — dashboard access is gated by SwagAPI's own panel accounts, not by these permission nodes (with the exception of `swagcore.dashboard.execute`)
+* [Migration Assistant](modules/migration.md) — gated entirely by `swagcore.admin`, no dedicated node
+* [Cross-Server Network](modules/network.md) — `swagcore.network.hub` / `.send` / `.servers`

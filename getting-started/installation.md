@@ -36,6 +36,7 @@ On first start, SwagCore will:
 * Generate `config.yml` and the other default resource files (`chat.yml`, `motd.yml`, `ranks.yml`, `rewards.yml`, `rules.yml`, `scoreboard.yml`, `tablist.yml`, `worlds.yml`, `achievements.yml`, `broadcasts.yml`)
 * Initialize its database tables via SwagAPI's shared database service
 * Register itself as the Vault Economy provider (check console for `"Registered as the Vault Economy provider."`)
+* Lazily create `kits.yml` (on first `/kit create`) and `migration-state.yml` (once the CMI/Essentials join-prompt is shown or `/swagcore migrate` is run) — neither exists until first used
 
 ### Step 3: Verify Installation
 
@@ -49,8 +50,8 @@ You should see something like:
 
 ```
 === SwagCore Status ===
-Version: 1.0.0
-Modules: 22
+Version: 1.0.1
+Modules: 32
   ✔ HomesModule
   ✔ WarpsModule
   ...
@@ -103,7 +104,10 @@ plugins/SwagCore/
 ├── tablist.yml            # Editable live from the dashboard's Editor tab
 ├── worlds.yml
 ├── achievements.yml
-└── broadcasts.yml
+├── broadcasts.yml
+├── kits.yml               # Created on first /kit create
+├── migration-state.yml    # Created once the migration join-prompt fires or /swagcore migrate runs
+└── migration-reports/     # One .txt report per completed migration run
 ```
 
 The SQLite/MySQL database itself is owned and managed by SwagAPI's shared database service, not stored per-plugin.

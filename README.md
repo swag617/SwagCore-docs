@@ -4,13 +4,15 @@
 
 ## What Makes SwagCore Special?
 
-SwagCore is organized into **22 independent modules**, each of which can be toggled on or off in `config.yml` under the `modules:` section. Core systems include:
+SwagCore is organized into **32 independent modules**, each of which can be toggled on or off in `config.yml` under the `modules:` section. Core systems include:
 
 * **Homes, Warps & Teleportation** — `/home`, `/warp`, `/tpa` with warmups, cooldowns, and a `/back` history
-* **Chat** — channel switching, local-radius chat, spam cooldowns, and shadow-muting
+* **Chat & Messaging** — channel switching, local-radius chat, spam cooldowns, shadow-muting, private `/msg`/`/reply`, and `/ignore`
 * **Moderation** — warn/mute/kick/ban/tempban with duration parsing (`7d`, `1h30m`), staff notes, a staff action log, and alt-account detection
 * **Economy** — SwagCore registers itself as the server's **Vault Economy provider** (no third-party economy plugin required — Vault itself must still be installed)
 * **Web Dashboard** — a browser admin panel covering players, chat, punishments, economy, leaderboards, a console, and a live tab list/scoreboard editor
+* **Migration Assistant** — a GUI-driven, read-only importer that pulls homes, warps, economy, punishments, nicknames, kits, and holograms straight from **CMI** or **Essentials** — see [Migration Assistant](modules/migration.md)
+* **Cross-Server Network** — `/hub`, `/send`, and `/network servers` over a BungeeCord/Velocity plugin-messaging channel, plus automatic restart evacuation — see [Cross-Server Network](modules/network.md)
 * **Identity** — nicknames, pronouns, status messages, and AFK tracking
 * **Admin Tools** — vanish, admin mode, invsee, sudo, hat, repair, clear inventory (with confirmation), feed/heal cooldowns, workbench/anvil/enderchest access, and broadcast
 * **Rank Progression** — a rank ladder with `/rankup`, distinct from a permissions plugin's rank groups
@@ -18,6 +20,7 @@ SwagCore is organized into **22 independent modules**, each of which can be togg
 * **Party System** — `/party create|invite|accept|leave|disband|chat`
 * **Achievements** — a browsable achievement list
 * **Metrics** — `/tps`, `/memory`, `/uptime`, `/plugins`, `/serverinfo` for quick server health checks
+* **Extras** — holograms, `/rtp`/`/wild` random teleport, `/sit`, `/scale`/`/speed`/`/nightvision`/`/launch` fun commands, player toggles (`/toggletpa`, `/togglepay`), and `/xpwithdraw` XP bottling
 
 ## Built on SwagAPI
 
@@ -47,6 +50,8 @@ SwagCore's dashboard is registered with SwagAPI's shared `IWebService` and mount
 | **Configuration** | Every `config.yml` key explained | [Configuration](getting-started/configuration.md) |
 | **Admin Commands** | Full command reference by category | [Admin Commands](admin-commands.md) |
 | **Permissions** | Every permission node and its default | [Permissions](permissions.md) |
+| **Migration Assistant** | Import from CMI/Essentials | [Migration Assistant](modules/migration.md) |
+| **Cross-Server Network** | `/hub`, `/send`, restart evacuation | [Cross-Server Network](modules/network.md) |
 
 ## Credits
 

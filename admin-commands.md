@@ -1,6 +1,6 @@
 # Admin Commands
 
-SwagCore registers 74 commands across its 22 modules. This page is the full command reference, organized by system. For the permission node behind each command, see [Permissions](permissions.md).
+SwagCore registers 100 commands across its 32 modules. This page is the full command reference, organized by system. For the permission node behind each command, see [Permissions](permissions.md).
 
 ## Help
 
@@ -35,6 +35,7 @@ Home slots beyond the `homes.max-homes` config default are granted via the `swag
 | `/tp <player> [target]` | `swagcore.tp.admin` | Teleport to a player (admin, bypasses request/accept flow) |
 | `/tpall` | `swagcore.tp.admin` | Teleport every online player to you |
 | `/tphere <player>` | `swagcore.tp.admin` | Teleport a player to you |
+| `/top` | `swagcore.top` | Teleport to the highest solid block above your current position |
 
 `/tpa` requests expire after `teleport.request-timeout-seconds` (default 60s).
 
@@ -46,6 +47,23 @@ Home slots beyond the `homes.max-homes` config default are granted via the `swag
 | `/chatlog <player> [lines]` | `swagcore.chat.log` | View a player's chat log |
 
 Chat spam protection (`chat.spam-cooldown-ms`) and local-radius channel range (`chat.local-radius`) are configured in [Configuration](getting-started/configuration.md). Muted players' messages are shadow-dropped by default (`chat.shadow-mute: true`) rather than rejected — see [`/mute`](#moderation) below.
+
+## Private Messaging & Ignore
+
+| Command | Permission | Description |
+|---------|-----------|-------------|
+| `/msg <player> <message>` | `swagcore.chat.msg` | Send a private message |
+| `/tell <player> <message>` | `swagcore.chat.msg` | Alias of `/msg` |
+| `/w <player> <message>` | `swagcore.chat.msg` | Alias of `/msg` |
+| `/reply <message>` | `swagcore.chat.msg` | Reply to the last private message you sent or received |
+| `/r <message>` | `swagcore.chat.msg` | Alias of `/reply` |
+| `/ignore <player\|list>` | `swagcore.ignore` | Ignore or unignore a player's DMs, or list who you're currently ignoring |
+
+**Reply partners.** `/reply` tracks your *current conversation partner* — set on both sides whenever a `/msg` is sent — not just your most recent sender, so replying works correctly even if a third player messaged you in between.
+
+**Ignore blocks incoming DMs, not chat.** If the recipient of a `/msg` is ignoring the sender, the message is silently rejected with a note back to the sender ("... is not accepting messages from you") — this only affects private messages, not public chat channels. Ignore lists persist per player and are cached in memory after the first async load on join.
+
+**Injection-safe.** The message body of a `/msg`/`/reply` is escaped before rendering, so a player can't smuggle `<click>`/`<hover>`/color tags into another player's chat via a DM.
 
 ## Economy
 
@@ -129,6 +147,72 @@ Players are also auto-marked AFK after `identity.afk-timeout-ticks` (default 600
 |---------|-----------|-------------|
 | `/spawn [world]` | `swagcore.world.spawn` | Teleport to spawn |
 | `/setspawn [world]` | `swagcore.world.setspawn` | Set the world spawn |
+| `/ptime <day\|noon\|night\|midnight\|<ticks>\|reset> [player]` | `swagcore.world.ptime` (own) / `swagcore.world.ptime.others` (others) | Set your (or another player's) personal time, independent of the world's actual time |
+| `/pweather <clear\|rain\|storm\|reset> [player]` | `swagcore.world.pweather` (own) / `swagcore.world.pweather.others` (others) | Set your (or another player's) personal weather |
+
+Per-world `gamemode`/`fly` rules also live under this module, configured in `worlds.yml` rather than through a command.
+
+## Random Teleport & Sitting
+
+| Command | Permission | Description |
+|---------|-----------|-------------|
+| `/rtp [world]` | `swagcore.rtp` | Randomly teleport to a safe location, optionally in a specific world |
+| `/wild [world]` | `swagcore.rtp` | Alias of `/rtp` |
+| `/sit` | `swagcore.sit` | Sit down at your current location, or stand back up if already sitting |
+
+**Safe-landing search.** `/rtp` picks a random point between `rtp.min-radius` and `rtp.max-radius` blocks from world spawn, then checks up to `rtp.max-attempts` times for solid, non-hazardous ground (lava, water, magma, cacti, and fire/campfire blocks are all rejected) with clear air at foot and head height before teleporting. It respects `rtp.cooldown-seconds` (bypassable via `swagcore.rtp.bypasscooldown`), an optional `rtp.cost` charged through Vault, an `rtp.warmup-seconds` delay, and an `rtp.worlds` allow-list (empty = every world allowed).
+
+**Sitting.** `/sit` also triggers passively: right-clicking a stair or slab (when `sit.right-click-blocks` is enabled, the default) sits you on it directly, at the correct height for a top or bottom slab/stair half. Standing up happens automatically on sneak, on taking damage, on dismount, or on quitting — so a sitting player is never stuck.
+
+## Fun & Cosmetic
+
+| Command | Permission | Description |
+|---------|-----------|-------------|
+| `/scale [player] <factor>` | `swagcore.fun.scale` (self) / `swagcore.fun.scale.others` (others) | Set an entity's model scale, clamped between `0.0625` and `16.0` |
+| `/speed [player] <1-10> [walk\|fly]` | `swagcore.fun.speed` (self) / `swagcore.fun.speed.others` (others) | Set walk or fly speed on a 1–10 scale |
+| `/nightvision` | `swagcore.fun.nightvision` | Toggle permanent night vision on yourself |
+| `/launch [player] [power]` | `swagcore.fun.launch` (self) / `swagcore.fun.launch.others` (others) | Launch a player into the air, power clamped between `0.1` and `5.0` (default `1.5`) |
+
+## Player Toggles & XP Bottling
+
+| Command | Permission | Description |
+|---------|-----------|-------------|
+| `/toggletpa` | `swagcore.toggle.tpa` | Toggle whether you accept incoming `/tpa`/`/tpahere` requests |
+| `/togglepay` | `swagcore.toggle.pay` | Toggle whether you accept incoming `/pay` payments |
+| `/xpwithdraw <levels>` | `swagcore.xp.withdraw` | Withdraw XP levels from yourself into a tradeable "Bottled Experience" item |
+| `/withdrawxp <levels>` | `swagcore.xp.withdraw` | Alias of `/xpwithdraw` |
+
+Both toggles default to **on** (accepting) and are read by the Teleportation and Economy modules respectively — a player with `toggletpa` off simply can't be targeted by `/tpa`/`/tpahere`. A withdrawn XP bottle is a normal inventory item (right-click to redeem it back into levels), so it can be traded, sold, or stored like any other item — there's no separate deposit command needed.
+
+## Kits
+
+| Command | Permission | Description |
+|---------|-----------|-------------|
+| `/kit` | `swagcore.kit.use` | Open the kits GUI (same as `/kits`) |
+| `/kit <name>` | `swagcore.kit.use` + the kit's own permission | Claim a kit directly by name |
+| `/kit create <name> [cooldown-seconds\|once]` | `swagcore.kit.admin` | Save your current inventory as a new (or updated) kit |
+| `/kit edit <name>` | `swagcore.kit.admin` | Open the kit editor GUI for an existing kit |
+| `/kit delete <name>` | `swagcore.kit.admin` | Delete a kit |
+| `/kit list` | `swagcore.kit.use` | Open the kits GUI |
+| `/kits` | `swagcore.kit.use` | Open the kits GUI |
+
+Kits are stored in `kits.yml` with Bukkit's native `ItemStack` YAML serialization, so enchantments, lore, and other item meta round-trip correctly. Each kit's per-player permission defaults to `swagcore.kit.<name>` unless a custom `permission` key is set in `kits.yml`. A kit's `cooldown-seconds` can be `0` (no cooldown), a positive number of seconds between claims, or `-1`/`once` for a one-time-only claim ever. Kit commands (run as console on claim) support a `{player}` placeholder.
+
+## Holograms
+
+| Command | Permission | Description |
+|---------|-----------|-------------|
+| `/hologram create <name>` | `swagcore.holograms.admin` | Create a hologram at your location |
+| `/hologram delete <name>` | `swagcore.holograms.admin` | Delete a hologram |
+| `/hologram addline <name> <text>` | `swagcore.holograms.admin` | Append a line |
+| `/hologram setline <name> <index> <text>` | `swagcore.holograms.admin` | Replace a specific line (1-based index) |
+| `/hologram removeline <name> <index>` | `swagcore.holograms.admin` | Remove a specific line |
+| `/hologram move <name>` | `swagcore.holograms.admin` | Move a hologram to your location |
+| `/hologram tp <name>` | `swagcore.holograms.admin` | Teleport to a hologram |
+| `/hologram list` | `swagcore.holograms.admin` | List every hologram by name |
+| `/hologram cmiimport` | `swagcore.holograms.admin` | Import holograms directly from `plugins/CMI/Saves/Holograms.yml` |
+
+`/hologram cmiimport` is the standalone equivalent of the Holograms category in the [Migration Assistant](modules/migration.md) — use whichever is more convenient; both skip holograms that already exist by name.
 
 ## Scoreboard
 
@@ -185,6 +269,16 @@ Party size is capped by `party.max-size` (default 6).
 | `/plugins` | `swagcore.metrics.view` | List loaded plugins |
 | `/serverinfo` | `swagcore.metrics.view` | View combined server metrics (TPS + memory + uptime + player count) |
 
+## Cross-Server Network
+
+| Command | Permission | Description |
+|---------|-----------|-------------|
+| `/hub` | `swagcore.network.hub` | Teleport yourself to the network's configured hub server |
+| `/send <player> <server>` | `swagcore.network.send` | Send another player to a named server on the network |
+| `/network servers` | `swagcore.network.servers` | View registered servers and their cached online counts |
+
+These commands only do anything on a server actually running behind a BungeeCord or Velocity proxy (auto-detected — no config needed to turn detection on) — otherwise they reply that no network is available rather than "Unknown command." See [Cross-Server Network](modules/network.md) for proxy detection, restart evacuation, and the `network:` config block.
+
 ## SwagCore Admin Command
 
 | Command | Permission | Description |
@@ -193,6 +287,8 @@ Party size is capped by `party.max-size` (default 6).
 | `/swagcore status` | `swagcore.admin` | Show version, module list, online count, Vault registration status, and any cached plugin updates |
 | `/swagcore rules reload` | `swagcore.admin` | Reload `rules.yml` |
 | `/swagcore editor [tablist\|scoreboard] [player]` | `swagcore.admin` | Send a clickable link to the web dashboard's Editor tab (console must specify a player) |
+| `/swagcore migrate` | `swagcore.admin` | Open the CMI/Essentials [Migration Assistant](modules/migration.md) GUI (player only) |
+| `/swagcore migrate skip` | `swagcore.admin` | Permanently dismiss the migration join-prompt without opening the GUI |
 
 All `/swagcore` subcommands require `swagcore.admin` — there's a single top-level permission check, not a per-subcommand one.
 
@@ -200,4 +296,6 @@ All `/swagcore` subcommands require `swagcore.admin` — there's a single top-le
 
 * [Permissions](permissions.md) — every permission node and its default
 * [Dashboard Overview & Access](dashboard/overview.md) — the web dashboard, reachable via `/swagcore editor`
+* [Migration Assistant](modules/migration.md) — `/swagcore migrate`, importing from CMI/Essentials
+* [Cross-Server Network](modules/network.md) — `/hub`, `/send`, `/network servers`, and restart evacuation
 * [Configuration](getting-started/configuration.md) — cooldowns, thresholds, and limits referenced throughout this page

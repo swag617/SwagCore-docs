@@ -79,6 +79,34 @@ The dashboard's Economy and Leaderboards tabs read top balances **live from onli
 
 ---
 
+## Migration
+
+**The migration join-prompt never showed up.**
+
+It only fires once per server boot, to the first online player holding `swagcore.admin`, and only if a `plugins/CMI/` or `plugins/Essentials/` folder actually exists on disk. If you dismissed it before (or already completed a migration), it won't ask again — run `/swagcore migrate` manually any time, or delete `plugins/SwagCore/migration-state.yml` and restart to bring the prompt back. See [Migration Assistant](../modules/migration.md).
+
+---
+
+**Is it safe to run the migration assistant while CMI/Essentials are still installed?**
+
+Yes — it's strictly read-only against CMI's and Essentials' own files/database. Nothing on the source plugin's side is ever modified, so you can migrate, review the results, and only remove the old plugin once you're satisfied.
+
+---
+
+## Network
+
+**`/hub`, `/send`, and `/network servers` say "This server isn't connected to a network right now."**
+
+This is expected on a standalone server — these commands only activate once a BungeeCord or Velocity proxy is detected (`spigot.yml`'s `settings.bungeecord` or `config/paper-global.yml`'s `proxies.velocity.enabled`). If you *are* running behind a proxy and still see this, double-check those settings are actually enabled and the server has restarted since. See [Cross-Server Network](../modules/network.md).
+
+---
+
+**Players weren't sent back after a scheduled restart.**
+
+Evacuation to the hub itself doesn't need any config — it works as soon as a proxy is detected. Auto-*return*, however, requires `network.this-server-name`, `network.hub-url`, and `network.shared-secret` to all be set and matching the hub's own SwagAPI config. Leave any of the three blank and evacuation still happens, it just won't report back for an automatic return trip.
+
+---
+
 ## General
 
 **Where is my data stored?**

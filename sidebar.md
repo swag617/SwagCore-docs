@@ -4,6 +4,10 @@
   * [Installation](getting-started/installation.md)
   * [Configuration](getting-started/configuration.md)
 
+* Modules
+  * [Migration Assistant](modules/migration.md)
+  * [Cross-Server Network](modules/network.md)
+
 * Dashboard
   * [Overview & Access](dashboard/overview.md)
   * [Players](dashboard/players.md)

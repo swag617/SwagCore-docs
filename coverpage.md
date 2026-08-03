@@ -1,4 +1,4 @@
-# SwagCore <small>v1.0.0</small>
+# SwagCore <small>v1.0.1</small>
 
 > Essentials/CMI replacement for Swag617 servers — homes, warps, moderation, economy, and a web dashboard, all built on SwagAPI.
 
@@ -10,6 +10,7 @@
 - 💰 Built-in Vault economy provider — no third-party economy plugin needed
 - 🏠 Homes, warps, TPA teleportation, and party system
 - 📊 Rank progression, achievements, playtime, and staff reports
+- 🔄 One-click CMI/Essentials migration assistant, and cross-server `/hub`/`/send` networking
 
 [Get Started](banner.html)
 [GitHub](https://github.com/swag617/SwagCore-docs)
